@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast_web.dart';
 import 'package:geolocator_web/geolocator_web.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
+import 'package:mobile_scanner/src/web/mobile_scanner_web.dart';
 import 'package:permission_handler_html/permission_handler_html.dart';
 import 'package:record_web/record_web.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
@@ -25,6 +26,7 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   GeolocatorPlugin.registerWith(registrar);
   GoogleMapsPlugin.registerWith(registrar);
   ImagePickerPlugin.registerWith(registrar);
+  MobileScannerWeb.registerWith(registrar);
   WebPermissionHandler.registerWith(registrar);
   RecordPluginWeb.registerWith(registrar);
   SharedPreferencesPlugin.registerWith(registrar);
