@@ -1,24 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-/// Custom bottom navigation bar for aviation safety application
-/// Implements bottom-heavy thumb zone strategy with haptic feedback
-/// Supports role-based navigation with secure admin access
+/// ================================
+/// Navigation item configuration
+/// ================================
+class CustomBottomBarItem {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final String route;
+  final bool showBadge;
+  final String? badgeText;
+
+  const CustomBottomBarItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.route,
+    this.showBadge = false,
+    this.badgeText,
+  });
+}
+
+/// ================================
+/// Variants
+/// ================================
+enum CustomBottomBarVariant {
+  standard,
+  compact,
+}
+
+/// ================================
+/// Custom Bottom Bar
+/// ================================
 class CustomBottomBar extends StatefulWidget {
-  /// Current selected index
   final int currentIndex;
+  final ValueChanged<int>? onTap;
 
-  /// Callback when navigation item is tapped
-  final Function(int) onTap;
-
-  /// Whether to show admin tab (requires authentication)
+  /// Admin / role options
   final bool showAdminTab;
+  final bool showRoleBadge;
+  final String? roleType;
+
+  final CustomBottomBarVariant variant;
 
   const CustomBottomBar({
     super.key,
     required this.currentIndex,
-    required this.onTap,
+    this.onTap,
     this.showAdminTab = false,
+    this.showRoleBadge = false,
+    this.roleType,
+    this.variant = CustomBottomBarVariant.standard,
   });
 
   @override
@@ -27,184 +61,155 @@ class CustomBottomBar extends StatefulWidget {
 
 class _CustomBottomBarState extends State<CustomBottomBar>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+  late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  int _previousIndex = 0;
+  int _lastTappedIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    _previousIndex = widget.currentIndex;
-    _animationController = AnimationController(
+    _controller = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
-  }
-
-  @override
-  void didUpdateWidget(CustomBottomBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentIndex != widget.currentIndex) {
-      _previousIndex = oldWidget.currentIndex;
-      _animationController.forward().then((_) {
-        _animationController.reverse();
-      });
-    }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
+  /// ================================
+  /// Navigation items (fusion logique)
+  /// ================================
+  List<CustomBottomBarItem> get _items => [
+        const CustomBottomBarItem(
+          icon: Icons.home_outlined,
+          activeIcon: Icons.home,
+          label: 'Home',
+          route: '/home-screen',
+        ),
+        const CustomBottomBarItem(
+          icon: Icons.report_outlined,
+          activeIcon: Icons.report,
+          label: 'Report',
+          route: '/incident-selection',
+        ),
+        if (widget.showAdminTab)
+          const CustomBottomBarItem(
+            icon: Icons.admin_panel_settings_outlined,
+            activeIcon: Icons.admin_panel_settings,
+            label: 'Admin',
+            route: '/admin-dashboard-screen',
+          ),
+        const CustomBottomBarItem(
+          icon: Icons.map_outlined,
+          activeIcon: Icons.map,
+          label: 'Map',
+          route: '/location-mapping',
+        ),
+        const CustomBottomBarItem(
+          icon: Icons.settings_outlined,
+          activeIcon: Icons.settings,
+          label: 'Settings',
+          route: '/settings-screen',
+        ),
+      ];
+
   void _handleTap(int index) {
-    // Haptic feedback for tab switching
+    if (index == widget.currentIndex) return;
+
     HapticFeedback.lightImpact();
-    widget.onTap(index);
+
+    setState(() => _lastTappedIndex = index);
+    _controller.forward().then((_) => _controller.reverse());
+
+    if (widget.onTap != null) {
+      widget.onTap!(index);
+    } else {
+      Navigator.pushNamed(context, _items[index].route);
+    }
   }
 
-  List<_NavigationItem> _getNavigationItems() {
-    final items = <_NavigationItem>[
-      _NavigationItem(
-        icon: Icons.home_outlined,
-        activeIcon: Icons.home,
-        label: 'Home',
-        route: '/home-screen',
-      ),
-      _NavigationItem(
-        icon: Icons.report_outlined,
-        activeIcon: Icons.report,
-        label: 'Report',
-        route: '/incident-selection',
-      ),
-      if (widget.showAdminTab)
-        _NavigationItem(
-          icon: Icons.admin_panel_settings_outlined,
-          activeIcon: Icons.admin_panel_settings,
-          label: 'Admin',
-          route: '/admin-authentication',
-        ),
-      _NavigationItem(
-        icon: Icons.map_outlined,
-        activeIcon: Icons.map,
-        label: 'Map',
-        route: '/location-mapping',
-      ),
-      _NavigationItem(
-        icon: Icons.help_outline,
-        activeIcon: Icons.help,
-        label: 'Help',
-        route: '/home-screen', // Help section in home
-      ),
-    ];
-    return items;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildItem(CustomBottomBarItem item, int index) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final navigationItems = _getNavigationItems();
+    final isSelected = widget.currentIndex == index;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.2),
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Container(
-          height: 64,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              navigationItems.length,
-              (index) => _buildNavigationItem(
-                context,
-                navigationItems[index],
-                index,
-                widget.currentIndex == index,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavigationItem(
-    BuildContext context,
-    _NavigationItem item,
-    int index,
-    bool isSelected,
-  ) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final color = isSelected
+        ? colorScheme.primary
+        : theme.bottomNavigationBarTheme.unselectedItemColor ??
+            colorScheme.onSurface.withValues(alpha: 0.6);
 
     return Expanded(
-      child: ScaleTransition(
-        scale: isSelected && _previousIndex != index
-            ? _scaleAnimation
-            : const AlwaysStoppedAnimation(1.0),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => _handleTap(index),
-            borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _handleTap(index),
+          borderRadius: BorderRadius.circular(12),
+          child: AnimatedBuilder(
+            animation: _scaleAnimation,
+            builder: (_, child) {
+              return Transform.scale(
+                scale: _lastTappedIndex == index
+                    ? _scaleAnimation.value
+                    : 1.0,
+                child: child,
+              );
+            },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? colorScheme.primary.withValues(alpha: 0.1)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      isSelected ? item.activeIcon : item.icon,
-                      size: 24,
-                      color: isSelected
-                          ? colorScheme.primary
-                          : theme.bottomNavigationBarTheme.unselectedItemColor,
-                    ),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        isSelected ? item.activeIcon : item.icon,
+                        size: 24,
+                        color: color,
+                      ),
+                      if (item.showBadge ||
+                          (widget.showRoleBadge && index == 0))
+                        Positioned(
+                          right: -8,
+                          top: -4,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: item.badgeText != null
+                                ? Text(
+                                    item.badgeText!,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 10,
+                                      color: colorScheme.onSecondary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    style: theme.textTheme.labelSmall!.copyWith(
-                      color: isSelected
-                          ? colorScheme.primary
-                          : theme.bottomNavigationBarTheme.unselectedItemColor,
+                  const SizedBox(height: 4),
+                  Text(
+                    item.label,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
                       fontWeight:
                           isSelected ? FontWeight.w500 : FontWeight.w400,
+                      color: color,
                     ),
-                    child: Text(
-                      item.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -214,19 +219,35 @@ class _CustomBottomBarState extends State<CustomBottomBar>
       ),
     );
   }
-}
 
-/// Internal class to represent navigation items
-class _NavigationItem {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
-  final String route;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
-  _NavigationItem({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-    required this.route,
-  });
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 6,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height:
+              widget.variant == CustomBottomBarVariant.compact ? 64 : 72,
+          child: Row(
+            children: List.generate(
+              _items.length,
+              (i) => _buildItem(_items[i], i),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
