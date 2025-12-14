@@ -9,6 +9,7 @@ import '../presentation/anonymous_chat_screen/anonymous_chat_screen.dart';
 import '../presentation/qr_access_screen/qr_access_screen.dart';
 import '../presentation/settings_screen/settings_screen.dart';
 import '../presentation/admin_dashboard_screen/admin_dashboard_screen.dart';
+
 class AppRoutes {
   static const String initial = '/';
   static const String splash = '/splash-screen';
@@ -17,6 +18,10 @@ class AppRoutes {
   static const String adminAuthentication = '/admin-authentication';
   static const String home = '/home-screen';
   static const String descriptionInput = '/description-input';
+  static const String anonymousChat = '/anonymous-chat-screen';
+  static const String qrAccess = '/qr-access-screen';
+  static const String settings = '/settings-screen';
+  static const String adminDashboard = '/admin-dashboard-screen';
 
   static Map<String, WidgetBuilder> routes = {
     initial: (context) => const SplashScreen(),
@@ -26,5 +31,9 @@ class AppRoutes {
     adminAuthentication: (context) => const AdminAuthentication(),
     home: (context) => const HomeScreen(),
     descriptionInput: (context) => const DescriptionInput(),
+    anonymousChat: (context) => const AnonymousChatScreen(),
+    qrAccess: (context) => const QrAccessScreen(),
+    settings: (context) => const SettingsScreen(),
+    adminDashboard: (context) => const AdminDashboardScreen(),
   };
 }
