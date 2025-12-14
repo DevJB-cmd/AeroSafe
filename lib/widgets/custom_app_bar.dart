@@ -271,23 +271,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildLeading(BuildContext context) {
-    if (leading != null) return leading;
+Widget _buildLeading(BuildContext context) {
+  if (leading != null) return leading!;
 
-    if (variant == CustomAppBarVariant.withBack ||
-        automaticallyImplyLeading &&
-            (ModalRoute.of(context)?.canPop ?? false)) {
-      return IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          HapticFeedback.lightImpact();
-          Navigator.of(context).pop();
-        },
-      );
-    }
-    return null;
+  if (variant == CustomAppBarVariant.withBack ||
+      (automaticallyImplyLeading && (ModalRoute.of(context)?.canPop ?? false))) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).pop();
+      },
+    );
   }
-
+  
+  // Utiliser un SizedBox au lieu de null
+  return const SizedBox(); 
+}
   Widget _buildRoleBadge(ThemeData theme) {
     final scheme = theme.colorScheme;
     final isAdmin = roleType?.toLowerCase() == 'admin';
