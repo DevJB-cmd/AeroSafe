@@ -195,51 +195,59 @@ class _DescriptionInputState extends State<DescriptionInput> {
     return true;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+ @override
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: CustomAppBar(
-          title: 'Décrire l\'incident',
-          variant: CustomAppBarVariant.withBack,
-          subtitle: 'Étape 3/3',
-          actions: [
-            Container(
-              margin: EdgeInsets.only(right: 2.w),
-              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
-              decoration: BoxDecoration(
-                color: AppTheme.successLight.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppTheme.successLight,
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomIconWidget(
-                    iconName: 'shield',
-                    color: AppTheme.successLight,
-                    size: 16,
-                  ),
-                  SizedBox(width: 1.w),
-                  Text(
-                    'Anonyme',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: AppTheme.successLight,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+  return PopScope(
+    canPop: !_hasUnsavedChanges,
+    onPopInvoked: (didPop) async {
+      if (didPop) return;
+
+      final shouldPop = await _onWillPop();
+      if (shouldPop && mounted) {
+        Navigator.of(context).pop();
+      }
+    },
+    child: Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: CustomAppBar(
+        title: 'Décrire l\'incident',
+        variant: CustomAppBarVariant.withBack,
+        subtitle: 'Étape 3/3',
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: 2.w),
+            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+            decoration: BoxDecoration(
+              color: AppTheme.successLight.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppTheme.successLight,
+                width: 1,
               ),
             ),
-          ],
-        ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomIconWidget(
+                  iconName: 'shield',
+                  color: AppTheme.successLight,
+                  size: 16,
+                ),
+                SizedBox(width: 1.w),
+                Text(
+                  'Anonyme',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: AppTheme.successLight,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
         body: SafeArea(
           child: Column(
             children: [
