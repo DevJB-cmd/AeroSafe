@@ -378,7 +378,7 @@ class AppTheme {
     ),
 
     // Dialog theme
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: dialogLight,
       elevation: 4.0,
       shadowColor: shadowLight,
@@ -435,7 +435,7 @@ class AppTheme {
 
     // AppBar theme
     appBarTheme: AppBarTheme(
-      color: surfaceDark,
+      backgroundColor: surfaceDark,
       foregroundColor: onSurfaceDark,
       elevation: 2.0,
       shadowColor: shadowDark,
@@ -453,7 +453,7 @@ class AppTheme {
     ),
 
     // Card theme
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: cardDark,
       elevation: 2.0,
       shadowColor: shadowDark,
@@ -655,7 +655,7 @@ class AppTheme {
     ),
 
     // Tab bar theme
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       labelColor: primaryDark,
       unselectedLabelColor: textSecondaryDark,
       indicatorColor: secondaryDark,
@@ -712,7 +712,7 @@ class AppTheme {
     ),
 
     // Dialog theme
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: dialogDark,
       elevation: 4.0,
       shadowColor: shadowDark,
