@@ -5,7 +5,10 @@ import '../presentation/location_mapping/location_mapping.dart';
 import '../presentation/admin_authentication/admin_authentication.dart';
 import '../presentation/home_screen/home_screen.dart';
 import '../presentation/description_input/description_input.dart';
-
+import '../presentation/anonymous_chat_screen/anonymous_chat_screen.dart';
+import '../presentation/qr_access_screen/qr_access_screen.dart';
+import '../presentation/settings_screen/settings_screen.dart';
+import '../presentation/admin_dashboard_screen/admin_dashboard_screen.dart';
 class AppRoutes {
   static const String initial = '/';
   static const String splash = '/splash-screen';
