@@ -1,79 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
-import 'app_theme.dart';
+
+import 'theme/app_theme.dart';
 import 'routes/app_routes.dart';
-import '../core/app_export.dart';
-import '../widgets/custom_error_widget.dart';
+import 'core/app_export.dart';
+import 'widgets/custom_error_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  bool _hasShownError = false;
+  bool hasShownError = false;
 
   // 🚨 CRITICAL: Custom error handling - DO NOT REMOVE
   ErrorWidget.builder = (FlutterErrorDetails details) {
-    if (!_hasShownError) {
-      _hasShownError = true;
+    if (!hasShownError) {
+      hasShownError = true;
 
-      // Reset flag after 3 seconds to allow error widget on new screens
-      Future.delayed(Duration(seconds: 5), () {
-        _hasShownError = false;
+      // Reset flag after 5 seconds
+      Future.delayed(const Duration(seconds: 5), () {
+        hasShownError = false;
       });
 
       return CustomErrorWidget(
         errorDetails: details,
       );
     }
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   };
 
   // 🚨 CRITICAL: Device orientation lock - DO NOT REMOVE
-  Future.wait([
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-  ]).then((value) {
-    runApp(MyApp());
-  });
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, screenType) {
-      return MaterialApp(
-        title: 'aerosafe',
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.light,
-        home: const HomeScreen(),
-        // 🚨 CRITICAL: NEVER REMOVE OR MODIFY
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(1.0),
-            ),
-            child: child!,
-          );
-        },
-        // 🚨 END CRITICAL SECTION
-        debugShowCheckedModeBanner: false,
-        routes: AppRoutes.routes,
-        initialRoute: AppRoutes.initial,
-      );
-    });
-
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme(),
-      darkTheme: AppTheme.darkTheme(),
-      themeMode: ThemeMode.system,
-      home: const HomeScreen(),
+    return Sizer(
+      builder: (context, orientation, screenType) {
+        return MaterialApp(
+          title: 'aerosafe',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.light,
+
+          // 🚨 CRITICAL: NEVER REMOVE OR MODIFY
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(1.0),
+              ),
+              child: child!,
+            );
+          },
+          // 🚨 END CRITICAL SECTION
+
+          debugShowCheckedModeBanner: false,
+          routes: AppRoutes.routes,
+          initialRoute: AppRoutes.initial,
+        );
+      },
     );
-  }
-}
-
   }
 }
