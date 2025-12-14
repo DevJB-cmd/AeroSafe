@@ -10,9 +10,11 @@ extension ImageTypeExtension on String {
       return ImageType.network;
     } else if (endsWith('.svg')) {
       return ImageType.svg;
-    } else if (startsWith('file://')) {
+    } else if (startsWith('file://') || startsWith('file: //')) {
       return ImageType.file;
-    } else if (endsWith('.png') || endsWith('.jpg') || endsWith('.jpeg')) {
+    } else if (endsWith('.png') ||
+        endsWith('.jpg') ||
+        endsWith('.jpeg')) {
       return ImageType.png;
     } else {
       return ImageType.unknown;
@@ -41,7 +43,9 @@ class CustomImageWidget extends StatelessWidget {
     this.semanticLabel,
   });
 
+  /// Image source (asset, network, file, svg)
   final String? imageUrl;
+
   final double? height;
   final double? width;
   final BoxFit? fit;
@@ -52,7 +56,11 @@ class CustomImageWidget extends StatelessWidget {
   final BorderRadius? radius;
   final EdgeInsetsGeometry? margin;
   final BoxBorder? border;
+
+  /// Widget affiché en cas d’erreur de chargement
   final Widget? errorWidget;
+
+  /// Accessibilité
   final String? semanticLabel;
 
   @override
@@ -139,7 +147,8 @@ class CustomImageWidget extends StatelessWidget {
                 backgroundColor: Colors.grey.shade100,
               ),
             ),
-            errorWidget: (_, __, ___) => errorWidget ??
+            errorWidget: (_, __, ___) =>
+                errorWidget ??
                 Image.asset(
                   placeHolder,
                   height: height,
@@ -150,6 +159,7 @@ class CustomImageWidget extends StatelessWidget {
           );
 
         case ImageType.png:
+        case ImageType.unknown:
         default:
           return Image.asset(
             imageUrl!,
