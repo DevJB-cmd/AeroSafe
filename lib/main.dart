@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
-
+import 'app_theme.dart';
+import 'routes/app_routes.dart';
 import '../core/app_export.dart';
 import '../widgets/custom_error_widget.dart';
 
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.light,
+        home: const HomeScreen(),
         // 🚨 CRITICAL: NEVER REMOVE OR MODIFY
         builder: (context, child) {
           return MediaQuery(
@@ -59,5 +61,19 @@ class MyApp extends StatelessWidget {
         initialRoute: AppRoutes.initial,
       );
     });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme(),
+      darkTheme: AppTheme.darkTheme(),
+      themeMode: ThemeMode.system,
+      home: const HomeScreen(),
+    );
+  }
+}
+
   }
 }
