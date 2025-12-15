@@ -160,7 +160,6 @@ class CustomImageWidget extends StatelessWidget {
 
         case ImageType.png:
         case ImageType.unknown:
-        default:
           return Image.asset(
             imageUrl!,
             height: height,
