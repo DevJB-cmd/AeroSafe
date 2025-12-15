@@ -4,9 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/app_export.dart';
-import '../../widgets/custom_icon_widget.dart';
-
 /// Splash Screen for AEROSAFE application
 /// Provides branded app launch experience while initializing services
 class SplashScreen extends StatefulWidget {
@@ -270,23 +267,24 @@ class _SplashScreenState extends State<SplashScreen>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ANAC Togo Logo placeholder
+        // ANAC Togo / AEROSAFE Logo
         Container(
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withValues(alpha: 0.05),
             shape: BoxShape.circle,
             border: Border.all(
               color: const Color(0xFF00C6FF).withValues(alpha: 0.3),
               width: 2,
             ),
           ),
-          child: Center(
-            child: CustomIconWidget(
-              iconName: 'flight',
-              size: 60,
-              color: const Color(0xFF00C6FF),
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/aerosafe_logo.png',
+              fit: BoxFit.cover,
+              width: 110,
+              height: 110,
             ),
           ),
         ),

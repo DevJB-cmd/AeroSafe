@@ -34,11 +34,9 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
   late AnimationController _lockoutController;
   late Animation<double> _shakeAnimation;
 
-  // Mock valid PIN codes for demonstration
+  // Unique secure PIN code for admin access (16 digits)
   final List<String> _validPins = [
-    'ANAC-TGO-123456',
-    'ANAC-TGO-789012',
-    'ANAC-TGO-345678',
+    'ANAC-TGO-9209258291098652',
   ];
 
   @override
@@ -120,10 +118,10 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
   void _authenticateWithPin() {
     if (_isLocked || _isLoading) return;
 
-    final String enteredPin = _pinController.text.trim();
+    final String pinCode = _pinController.text;
 
-    // Validate format
-    if (!enteredPin.startsWith('ANAC-TGO-') || enteredPin.length != 17) {
+    // Validate: must be exactly 16 digits
+    if (pinCode.isEmpty || pinCode.length != 16) {
       _handleInvalidFormat();
       return;
     }
@@ -136,7 +134,8 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
     Future.delayed(const Duration(milliseconds: 800), () {
       if (!mounted) return;
 
-      if (_validPins.contains(enteredPin)) {
+      final String fullPin = 'ANAC-TGO-$pinCode';
+      if (_validPins.contains(fullPin)) {
         _handleSuccessfulAuth();
       } else {
         _handleFailedAuth();
@@ -147,7 +146,7 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
   void _handleInvalidFormat() {
     HapticFeedback.heavyImpact();
     _shakeController.forward().then((_) => _shakeController.reverse());
-    _showErrorMessage('Invalid PIN format. Use ANAC-TGO-XXXXXX');
+    _showErrorMessage('Please enter all 16 digits');
   }
 
   void _handleSuccessfulAuth() {
@@ -168,7 +167,7 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
     // Navigate to admin dashboard
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/home-screen');
+        Navigator.pushReplacementNamed(context, '/admin-dashboard-screen');
       }
     });
   }
@@ -322,32 +321,13 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
         ),
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomIconWidget(
-              iconName: 'admin_panel_settings',
-              size: 12.w,
-              color: theme.colorScheme.primary,
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              'ANAC',
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
-              ),
-            ),
-            Text(
-              'TOGO',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 1.2,
-              ),
-            ),
-          ],
+        child: ClipOval(
+          child: Image.asset(
+            'assets/images/aerosafe_logo.png',
+            fit: BoxFit.cover,
+            width: 12.w,
+            height: 12.w,
+          ),
         ),
       ),
     );
@@ -456,7 +436,7 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
           Pinput(
             controller: _pinController,
             focusNode: _pinFocusNode,
-            length: 6,
+            length: 16,
             defaultPinTheme: defaultPinTheme,
             focusedPinTheme: focusedPinTheme,
             errorPinTheme: errorPinTheme,
@@ -484,7 +464,7 @@ class _AdminAuthenticationState extends State<AdminAuthentication>
       width: double.infinity,
       height: 6.h,
       child: ElevatedButton(
-        onPressed: _isLoading || _pinController.text.length < 6
+        onPressed: _isLoading || _pinController.text.length < 16
             ? null
             : _authenticateWithPin,
         style: ElevatedButton.styleFrom(

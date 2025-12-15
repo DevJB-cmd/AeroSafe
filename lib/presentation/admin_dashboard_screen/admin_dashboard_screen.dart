@@ -9,6 +9,7 @@ import './widgets/health_metrics_widget.dart';
 import './widgets/heatmap_visualization_widget.dart';
 import './widgets/incident_feed_widget.dart';
 import './widgets/weekly_statistics_widget.dart';
+import './widgets/anonymous_messages_widget.dart';
 
 /// Admin Dashboard Screen for ANAC Togo agents
 /// Provides cyber-themed control room interface for monitoring aviation safety incidents
@@ -468,6 +469,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         onIncidentTap: _handleIncidentTap,
                         onIncidentLongPress: _handleIncidentLongPress,
                       ),
+                      SizedBox(height: 3.h),
+
+                      // Anonymous Messages
+                      const AnonymousMessagesWidget(),
                       SizedBox(height: 10.h),
                     ],
                   ),

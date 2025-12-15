@@ -119,17 +119,47 @@ class _DescriptionInputState extends State<DescriptionInput> {
       if (mounted) {
         // Generate cryptographic token
         final token = _generateCryptographicToken();
-
-        // Navigate to confirmation screen with token
-        Navigator.pushReplacementNamed(
-          context,
-          '/incident-confirmation',
-          arguments: {
-            'token': token,
-            'timestamp': _selectedTimestamp,
-            'emotion': _selectedEmotion,
-          },
+        
+        // Add the submitted report as the first message in the anonymous chat
+        final messageService = AnonymousMessageService();
+        final newMessage = AnonymousMessage(
+          id: (messageService.allMessages.length + 1).toString(),
+          message: _descriptionController.text.trim(),
+          timestamp: DateTime.now().toString(),
+          isReporter: true,
+          agentId: null,
+          isReceived: false,
         );
+        messageService.addMessage(newMessage);
+
+        // Persist the report locally as JSON for auditing/export (device storage)
+        try {
+          final persistence = ReportPersistenceService();
+          final reportMap = {
+            'id': token,
+            'message': _descriptionController.text.trim(),
+            'timestamp': DateTime.now().toIso8601String(),
+            'emotion': _selectedEmotion,
+            'photos': _attachedPhotos,
+            'isAnonymous': true,
+          };
+          await persistence.saveReport(reportMap);
+        } catch (e) {
+          // If persistence fails, continue without blocking the user
+        }
+
+        // Navigate to anonymous chat screen with token for follow-up
+        if (mounted) {
+          Navigator.pushReplacementNamed(
+            context,
+            '/anonymous-chat-screen',
+            arguments: {
+              'token': token,
+              'timestamp': _selectedTimestamp,
+              'emotion': _selectedEmotion,
+            },
+          );
+        }
       }
     } catch (e) {
       if (mounted) {

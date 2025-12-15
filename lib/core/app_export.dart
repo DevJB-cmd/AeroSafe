@@ -4,3 +4,5 @@ export '../routes/app_routes.dart';
 export '../widgets/custom_icon_widget.dart';
 export '../widgets/custom_image_widget.dart';
 export '../theme/app_theme.dart';
+export 'services/anonymous_message_service.dart';
+export 'services/report_persistence_service.dart';

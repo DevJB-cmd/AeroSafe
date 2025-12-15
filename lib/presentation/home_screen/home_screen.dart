@@ -3,10 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/app_export.dart';
-import '../../widgets/custom_icon_widget.dart';
 import './widgets/action_card_widget.dart';
 import './widgets/airplane_background_widget.dart';
-import './widgets/emergency_banner_widget.dart';
 import './widgets/settings_modal_widget.dart';
 import './widgets/welcome_message_widget.dart';
 
@@ -22,8 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String _currentLanguage = 'fr';
   ThemeMode _currentTheme = ThemeMode.system;
-  bool _hasEmergencyAlert = false;
-  bool _isOnline = true;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -31,8 +27,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _loadPreferences();
-    _checkConnectivity();
-    _checkEmergencyAlerts();
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -79,20 +73,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() => _currentTheme = theme);
   }
 
-  void _checkConnectivity() {
-    // Simulate connectivity check
-    setState(() => _isOnline = true);
-  }
-
-  void _checkEmergencyAlerts() {
-    // Simulate emergency alert check
-    setState(() => _hasEmergencyAlert = false);
-  }
-
   Future<void> _handleRefresh() async {
     HapticFeedback.mediumImpact();
-    _checkConnectivity();
-    _checkEmergencyAlerts();
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -124,12 +106,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _navigateToAbout() {
     HapticFeedback.lightImpact();
     _showAboutDialog();
-  }
-
-  void _handleEmergencyAlert() {
-    HapticFeedback.heavyImpact();
-    // Navigate to emergency incident details
-    Navigator.pushNamed(context, '/incident-selection');
   }
 
   void _showAboutDialog() {
@@ -199,43 +175,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  String _getEmergencyMessage() {
-    if (_currentLanguage == 'fr') {
-      return 'Alerte critique: Incident nécessitant une attention immédiate';
-    } else if (_currentLanguage == 'es') {
-      return 'Alerta crítica: Incidente que requiere atención inmediata';
-    } else {
-      return 'Critical alert: Incident requiring immediate attention';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    String anonymousTitle = 'Signalement Anonyme';
-    String anonymousDesc = 'Signaler un incident en toute confidentialité';
-    String adminTitle = 'Accès Administrateur';
-    String adminDesc = 'Tableau de bord et gestion des incidents';
-    String aboutTitle = 'À Propos';
-    String aboutDesc = 'Informations sur la plateforme AEROSAFE';
-
-    if (_currentLanguage == 'en') {
-      anonymousTitle = 'Anonymous Reporting';
-      anonymousDesc = 'Report an incident confidentially';
-      adminTitle = 'Admin Access';
-      adminDesc = 'Dashboard and incident management';
-      aboutTitle = 'About';
-      aboutDesc = 'Information about AEROSAFE platform';
-    } else if (_currentLanguage == 'es') {
-      anonymousTitle = 'Informe Anónimo';
-      anonymousDesc = 'Informar un incidente confidencialmente';
-      adminTitle = 'Acceso de Administrador';
-      adminDesc = 'Panel de control y gestión de incidentes';
-      aboutTitle = 'Acerca de';
-      aboutDesc = 'Información sobre la plataforma AEROSAFE';
-    }
+    final anonymousTitle = _currentLanguage == 'en'
+        ? 'Anonymous Reporting'
+        : _currentLanguage == 'es'
+            ? 'Informe Anónimo'
+            : 'Signalement Anonyme';
+    final anonymousDesc = _currentLanguage == 'en'
+        ? 'Report an incident confidentially'
+        : _currentLanguage == 'es'
+            ? 'Informar un incidente confidencialmente'
+            : 'Signaler un incident en toute confidentialité';
+    final adminTitle = _currentLanguage == 'en'
+        ? 'Admin Access'
+        : _currentLanguage == 'es'
+            ? 'Acceso de Administrador'
+            : 'Accès Administrateur';
+    final adminDesc = _currentLanguage == 'en'
+        ? 'Dashboard and incident management'
+        : _currentLanguage == 'es'
+            ? 'Panel de control y gestión de incidentes'
+            : 'Tableau de bord et gestion des incidents';
+    final aboutTitle = _currentLanguage == 'en'
+        ? 'About'
+        : _currentLanguage == 'es'
+            ? 'Acerca de'
+            : 'À Propos';
+    final aboutDesc = _currentLanguage == 'en'
+        ? 'Information about AEROSAFE platform'
+        : _currentLanguage == 'es'
+            ? 'Información sobre la plataforma AEROSAFE'
+            : 'Informations sur la plateforme AEROSAFE';
 
     return Scaffold(
       body: Stack(
@@ -258,92 +232,76 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       opacity: _fadeAnimation,
                       child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Row(
+                        child: Column(
                           children: [
-                            // AEROSAFE logo
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colorScheme.primary,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'AEROSAFE',
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: colorScheme.onPrimary,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                            // Connectivity indicator
-                            if (!_isOnline)
-                              Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFB347)
-                                      .withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                    color: const Color(0xFFFFB347),
-                                    width: 1,
+                            Row(
+                              children: [
+                                // AEROSAFE logo: text only
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    'AEROSAFE',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: colorScheme.onPrimary,
+                                      letterSpacing: 1.2,
+                                    ),
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    CustomIconWidget(
-                                      iconName: 'cloud_off',
-                                      color: const Color(0xFFFFB347),
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Offline',
-                                      style:
-                                          theme.textTheme.labelSmall?.copyWith(
-                                        color: const Color(0xFFFFB347),
-                                        fontWeight: FontWeight.w600,
+                                const Spacer(),
+                                // Settings button
+                                IconButton(
+                                  icon: CustomIconWidget(
+                                    iconName: 'settings',
+                                    color: colorScheme.onSurface,
+                                    size: 24,
+                                  ),
+                                  onPressed: _showSettings,
+                                  tooltip: 'Settings',
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            // Logo centered at the bottom
+                            Center(
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'assets/images/aerosafe_logo.png',
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white.withValues(alpha: 0.06),
                                       ),
-                                    ),
-                                  ],
+                                      child: Center(
+                                        child: CustomIconWidget(
+                                          iconName: 'flight',
+                                          size: 28,
+                                          color: colorScheme.onPrimary,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                            // Settings button
-                            IconButton(
-                              icon: CustomIconWidget(
-                                iconName: 'settings',
-                                color: colorScheme.onSurface,
-                                size: 24,
-                              ),
-                              onPressed: _showSettings,
-                              tooltip: 'Settings',
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  // Emergency banner
-                  if (_hasEmergencyAlert)
-                    SliverToBoxAdapter(
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: EmergencyBannerWidget(
-                          message: _getEmergencyMessage(),
-                          onTap: _handleEmergencyAlert,
-                          currentLanguage: _currentLanguage,
-                        ),
-                      ),
-                    ),
                   // Welcome message
                   SliverToBoxAdapter(
                     child: FadeTransition(

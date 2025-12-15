@@ -8,7 +8,7 @@ import '../../widgets/custom_bottom_bar.dart';
 import './widgets/chat_input_widget.dart';
 import './widgets/connection_status_widget.dart';
 import './widgets/encryption_indicator_widget.dart';
-import './widgets/message_bubble_widget.dart';
+import './widgets/enhanced_message_bubble_widget.dart';
 import './widgets/typing_indicator_widget.dart';
 
 /// Anonymous Chat Screen for secure encrypted communication
@@ -27,62 +27,13 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
   final bool _isEncrypted = true;
   bool _isTyping = false;
   final int _participantCount = 2;
-
-  // Mock chat messages with aviation-themed content
-  final List<Map<String, dynamic>> _messages = [
-    {
-      "id": 1,
-      "message":
-          "Hello, I submitted an incident report earlier today regarding runway debris. Can you provide an update on the investigation status?",
-      "timestamp": "12/12/2025 14:23 GMT+0",
-      "isReporter": true,
-      "agentId": null,
-    },
-    {
-      "id": 2,
-      "message":
-          "Thank you for your report. I'm ANAC Agent reviewing your case. We have received your documentation and photos. The runway inspection team has been dispatched to verify the debris location you indicated.",
-      "timestamp": "12/12/2025 14:25 GMT+0",
-      "isReporter": false,
-      "agentId": "ANAC-TG-2847",
-    },
-    {
-      "id": 3,
-      "message":
-          "That's reassuring to hear. The debris was approximately 200 meters from the threshold of Runway 09. I noticed it during my pre-flight inspection around 13:45 local time.",
-      "timestamp": "12/12/2025 14:27 GMT+0",
-      "isReporter": true,
-      "agentId": null,
-    },
-    {
-      "id": 4,
-      "message":
-          "Your precise location details are very helpful. The inspection team has confirmed the debris and initiated removal procedures. We're also reviewing CCTV footage to determine the source. Your anonymity remains protected throughout this process.",
-      "timestamp": "12/12/2025 14:30 GMT+0",
-      "isReporter": false,
-      "agentId": "ANAC-TG-2847",
-    },
-    {
-      "id": 5,
-      "message":
-          "Excellent. Will there be any follow-up actions required from my side? I want to ensure this doesn't happen again.",
-      "timestamp": "12/12/2025 14:32 GMT+0",
-      "isReporter": true,
-      "agentId": null,
-    },
-    {
-      "id": 6,
-      "message":
-          "No further action needed from you at this time. We will implement additional runway inspection protocols based on your report. You can track the incident status using your anonymous token. Thank you for contributing to aviation safety in Togo.",
-      "timestamp": "12/12/2025 14:35 GMT+0",
-      "isReporter": false,
-      "agentId": "ANAC-TG-2847",
-    },
-  ];
+  late AnonymousMessageService _messageService;
 
   @override
   void initState() {
     super.initState();
+    _messageService = AnonymousMessageService();
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
       _simulateTyping();
@@ -123,14 +74,19 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
 
+    final newMessage = AnonymousMessage(
+      id: (_messageService.allMessages.length + 1).toString(),
+      message: message,
+      timestamp:
+          '12/12/2025 ${TimeOfDay.now().format(context)} GMT+0',
+      isReporter: true,
+      agentId: null,
+      isReceived: false,
+    );
+    
+    _messageService.addMessage(newMessage);
+    
     setState(() {
-      _messages.add({
-        "id": _messages.length + 1,
-        "message": message,
-        "timestamp": "12/12/2025 ${TimeOfDay.now().format(context)} GMT+0",
-        "isReporter": true,
-        "agentId": null,
-      });
       _messageController.clear();
     });
 
@@ -351,20 +307,28 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
                 child: ListView.builder(
                   controller: _scrollController,
                   padding: EdgeInsets.symmetric(vertical: 2.h),
-                  itemCount: _messages.length + (_isTyping ? 1 : 0),
+                  itemCount: _messageService.allMessages.length +
+                      (_isTyping ? 1 : 0),
                   itemBuilder: (context, index) {
-                    if (index == _messages.length && _isTyping) {
+                    if (index == _messageService.allMessages.length &&
+                        _isTyping) {
                       return const TypingIndicatorWidget(
                         participantName: 'ANAC Agent',
                       );
                     }
 
-                    final message = _messages[index];
-                    return MessageBubbleWidget(
-                      message: message["message"] as String,
-                      timestamp: message["timestamp"] as String,
-                      isReporter: message["isReporter"] as bool,
-                      agentId: message["agentId"] as String?,
+                    final message = _messageService.allMessages[index];
+                    return EnhancedMessageBubbleWidget(
+                      message: message.message,
+                      timestamp: message.timestamp,
+                      isReporter: message.isReporter,
+                      agentId: message.agentId,
+                      messageId: message.id,
+                      isReceived: message.isReceived,
+                      onMarkReceived: () {
+                        _messageService.markMessageAsReceived(message.id);
+                        setState(() {});
+                      },
                     );
                   },
                 ),
