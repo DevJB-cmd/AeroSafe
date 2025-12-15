@@ -274,7 +274,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
               SizedBox(height: 2.h),
               Text(
                 'Quick Actions',
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -335,7 +335,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     showDialog(
       context: context,
       builder: (context) {
-        final theme = Theme.of(context);
         return AlertDialog(
           title: Row(
             children: [
