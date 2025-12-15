@@ -33,7 +33,6 @@ class _QrAccessScreenState extends State<QrAccessScreen>
   bool _isDemoMode = false;
   bool _isTorchOn = false;
   bool _hasPermission = false;
-  String? _scannedCode;
 
   @override
   void initState() {
@@ -86,7 +85,6 @@ class _QrAccessScreenState extends State<QrAccessScreen>
 
     setState(() {
       _isScanning = false;
-      _scannedCode = code;
     });
 
     // Haptic feedback
