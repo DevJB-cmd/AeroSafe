@@ -204,11 +204,10 @@ Widget build(BuildContext context) {
     onPopInvokedWithResult: (didPop, result) {
       if (didPop) return;
 
+      final navigator = Navigator.of(context);
       _onWillPop().then((shouldPop) {
         if (shouldPop && mounted) {
-          if (mounted) {
-            Navigator.of(context).pop();
-          }
+          navigator.pop();
         }
       });
     },
