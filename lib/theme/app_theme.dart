@@ -190,31 +190,5 @@ class AppTheme {
     // Additional components for dark theme can be similarly defined...
   );
 
-  /// Helper method to build text theme based on brightness.
-  static TextTheme _buildTextTheme({required bool isLight}) {
-    final Color textPrimary = isLight ? textPrimaryLight : textPrimaryDark;
-    final Color textSecondary = isLight ? textSecondaryLight : textSecondaryDark;
 
-    return TextTheme(
-      displayLarge: GoogleFonts.inter(fontSize: 57, fontWeight: FontWeight.w400, color: textPrimary),
-      displayMedium: GoogleFonts.inter(fontSize: 45, fontWeight: FontWeight.w400, color: textPrimary),
-      displaySmall: GoogleFonts.inter(fontSize: 36, fontWeight: FontWeight.w400, color: textPrimary),
-
-      headlineLarge: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w700, color: textPrimary),
-      headlineMedium: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w700, color: textPrimary),
-      headlineSmall: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700, color: textPrimary),
-
-      titleLarge: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w500, color: textPrimary),
-      titleMedium: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500, color: textPrimary),
-      titleSmall: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: textPrimary),
-
-      bodyLarge: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w400, color: textPrimary),
-      bodyMedium: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w400, color: textPrimary),
-      bodySmall: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w400, color: textSecondary),
-
-      labelLarge: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: textPrimary),
-      labelMedium: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: textPrimary),
-      labelSmall: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500, color: textSecondary),
-    );
-  }
 }
