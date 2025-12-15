@@ -201,12 +201,14 @@ Widget build(BuildContext context) {
 
   return PopScope(
     canPop: !_hasUnsavedChanges,
-    onPopInvoked: (didPop) {
+    onPopInvokedWithResult: (didPop, result) {
       if (didPop) return;
 
       _onWillPop().then((shouldPop) {
         if (shouldPop && mounted) {
-          Navigator.of(context).pop();
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
         }
       });
     },
