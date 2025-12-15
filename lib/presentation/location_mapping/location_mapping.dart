@@ -31,7 +31,6 @@ class _LocationMappingState extends State<LocationMapping>
   Map<String, dynamic>? _selectedZone;
 
   // GPS location
-  Position? _currentPosition;
   bool _isLoadingLocation = false;
   bool _gpsEnabled = false;
 
@@ -43,7 +42,6 @@ class _LocationMappingState extends State<LocationMapping>
 
   // Animation controller for zone selection
   late AnimationController _selectionAnimationController;
-  late Animation<double> _scaleAnimation;
 
   // Airport zones with coordinates
   final List<Map<String, dynamic>> _airportZones = [
@@ -138,12 +136,6 @@ class _LocationMappingState extends State<LocationMapping>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(
-        parent: _selectionAnimationController,
-        curve: Curves.easeInOut,
-      ),
-    );
   }
 
   void _createMarkers() {
@@ -205,7 +197,7 @@ class _LocationMappingState extends State<LocationMapping>
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        accuracy: LocationAccuracy.high,
       );
 
       setState(() {
