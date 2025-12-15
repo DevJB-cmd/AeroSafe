@@ -151,7 +151,6 @@ class IncidentFeedWidget extends StatelessWidget {
                     final incident = incidents[index];
                     final priority = incident['priority'] as String? ?? 'low';
                     final category = incident['category'] as String? ?? 'other';
-                    final timestamp = incident['timestamp'] as DateTime;
                     final description =
                         incident['description'] as String? ?? '';
 
@@ -288,20 +287,5 @@ class IncidentFeedWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inMinutes < 1) {
-      return 'Just now';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else {
-      return '${timestamp.day}/${timestamp.month}/${timestamp.year} ${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
-    }
   }
 }
