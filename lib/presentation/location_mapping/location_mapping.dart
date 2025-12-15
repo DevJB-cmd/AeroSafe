@@ -197,11 +197,12 @@ class _LocationMappingState extends State<LocationMapping>
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-        accuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       setState(() {
-        _currentPosition = position;
         _isLoadingLocation = false;
       });
 
