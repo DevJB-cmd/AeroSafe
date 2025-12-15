@@ -24,9 +24,9 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isConnected = true;
-  bool _isEncrypted = true;
+  final bool _isEncrypted = true;
   bool _isTyping = false;
-  int _participantCount = 2;
+  final int _participantCount = 2;
 
   // Mock chat messages with aviation-themed content
   final List<Map<String, dynamic>> _messages = [
