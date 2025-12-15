@@ -16,8 +16,6 @@ class ConnectionStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     if (isConnected) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
