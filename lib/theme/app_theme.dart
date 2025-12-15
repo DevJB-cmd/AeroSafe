@@ -26,19 +26,9 @@ class AppTheme {
   static const Color shadowLight = Color(0x33000000); // 20% black opacity
   static Color successColor = const Color(0xFF00D95A); // Couleur de succès
   static Color warningColor = const Color(0xFFFFB347); // Couleur d'avertissement
-  static const Color errorLight = Color(0xFFFF4757); // Couleur d'erreur
-  static const Color successColor = Color(0xFF00D95A); // Couleur de succès
-  static const Color warningColor = Color(0xFFFFB347); // Couleur d'avertissement
   static const Color neutralColor = Color(0xFFA0AEC0); // Couleur neutre
 
   /// Exemple de configuration d'une méthode pour obtenir des styles monospaces
-  static TextStyle getMonospaceStyle({required bool isLight, double fontSize = 14.0}) {
-    return GoogleFonts.mono(
-      fontSize: fontSize,
-      color: isLight ? Colors.black : Colors.white,  // Changez ceci selon votre thème
-    );
-  }
-
   // Dark theme colors
   static const Color primaryDark = Color(0xFF00C6FF);
   static const Color primaryVariantDark = Color(0xFF0056B3);
