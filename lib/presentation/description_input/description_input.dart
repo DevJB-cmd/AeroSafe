@@ -201,13 +201,14 @@ Widget build(BuildContext context) {
 
   return PopScope(
     canPop: !_hasUnsavedChanges,
-    onPopInvoked: (didPop) async {
+    onPopInvoked: (didPop) {
       if (didPop) return;
 
-      final shouldPop = await _onWillPop();
-      if (shouldPop && mounted) {
-        Navigator.of(context).pop();
-      }
+      _onWillPop().then((shouldPop) {
+        if (shouldPop && mounted) {
+          Navigator.of(context).pop();
+        }
+      });
     },
     child: Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
