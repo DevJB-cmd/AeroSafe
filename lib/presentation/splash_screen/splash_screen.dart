@@ -23,7 +23,6 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _radarAnimation;
 
-  bool _isInitialized = false;
   String _statusMessage = 'Initializing AEROSAFE...';
   double _progress = 0.0;
 
@@ -99,10 +98,6 @@ class _SplashScreenState extends State<SplashScreen>
       // Step 5: Complete initialization
       await _updateProgress(1.0, 'Ready!');
       await Future.delayed(const Duration(milliseconds: 500));
-
-      setState(() {
-        _isInitialized = true;
-      });
 
       // Navigate based on authentication status
       await Future.delayed(const Duration(milliseconds: 300));
