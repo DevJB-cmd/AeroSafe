@@ -22,7 +22,6 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     with SingleTickerProviderStateMixin {
   int _currentBottomNavIndex = 0;
-  bool _isRefreshing = false;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -144,13 +143,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   }
 
   Future<void> _handleRefresh() async {
-    setState(() => _isRefreshing = true);
     HapticFeedback.mediumImpact();
 
     // Simulate data refresh
     await Future.delayed(const Duration(seconds: 2));
-
-    setState(() => _isRefreshing = false);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -260,8 +256,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        final theme = Theme.of(context);
-        final colorScheme = theme.colorScheme;
+        final colorScheme = Theme.of(context).colorScheme;
 
         return Container(
           padding: EdgeInsets.all(4.w),
