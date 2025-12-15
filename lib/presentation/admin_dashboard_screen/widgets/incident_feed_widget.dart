@@ -241,15 +241,6 @@ class IncidentFeedWidget extends StatelessWidget {
                                           ],
                                         ),
                                         SizedBox(height: 0.5.h),
-                                        Text(
-                                          _formatTimestamp(timestamp),
-                                          style: AppTheme.getMonospaceStyle(
-                                            isLight: true,
-                                            fontSize: 9.sp,
-                                          ).copyWith(
-                                            color: colorScheme.onSurfaceVariant,
-                                          ),
-                                        ),
                                       ],
                                     ),
                                   ),
